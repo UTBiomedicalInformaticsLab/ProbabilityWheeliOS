@@ -5,16 +5,20 @@
 //  Created by Allen Wang on 11/6/15.
 //  Copyright © 2015 UT Biomedical Informatics Lab. All rights reserved.
 //
+//  This class essentially acts as a model for all other views/controllers.
+//  Traditionally, we would want each MVC module to have their own distinct
+//  model, view, controller, but each MVC requires access to all of these options.
+//
+//  In a sense, these are accessible to anything that can access the sharedInstance.
+//  By using a singleton class, it can be accessed pretty much globally.
 
 import Foundation
 import UIKit
 class SharedInfo {
     
     let numOptions = 6
-    let knob_xOffset = Float(-2.9)
-    let knob_yOffset = Float(4)
-    //let knob_xOffset = Float(0)
-    //let knob_yOffset = Float(0)
+    let knob_xOffset = Float(-2.75)
+    let knob_yOffset = Float(-3.2)
     private var wheelRadius:CGFloat = 0.0
     private var wheelCenter:CGPoint? = nil
     var options = [Option]()

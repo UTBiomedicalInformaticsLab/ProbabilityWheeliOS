@@ -19,18 +19,7 @@ class ParticipantOptionCell: UITableViewCell {
             updateUI()
         }
     }
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        // Initialization code
-    }
     
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
     func updateUI() {
         if let option = self.option {
             infoLabel?.text = option.getText()

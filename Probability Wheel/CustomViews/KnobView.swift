@@ -4,6 +4,12 @@
 //
 //  Created by Allen Wang on 11/15/15.
 //  Copyright © 2015 UT Biomedical Informatics Lab. All rights reserved.
+//
+//  This class is used to handle interactions with the knobs.
+//  Knobs are used in order to control moving the different slices of the wheel.
+//
+//  A lot of concepts in this code was borrowed from the Android version of the app,
+//  so it doesn't really follow the MVC structure as strictly.
 
 import UIKit
 
@@ -25,7 +31,6 @@ class KnobView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = UIColor.blackColor()
-        //self.backgroundColor = UIColor.clearColor()
         drawRect(frame)
     }
 
@@ -40,7 +45,7 @@ class KnobView: UIView {
     func getAngle() -> CGFloat {
         return self.angle
     }
-
+    
     func setPoint(point: CGPoint) {
         frame.origin.x = point.x
         frame.origin.y = point.y

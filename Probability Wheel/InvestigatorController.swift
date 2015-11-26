@@ -24,11 +24,13 @@ class InvestigatorController: UIViewController, UITableViewDelegate, UITableView
         sharedInfo.togglePercentageView()
     }
     
+    // Handles when switching between Investigator/Participant
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
     
+    // Initializations
     override func viewDidLoad() {
         super.viewDidLoad()
         sharedInfo.reset()
@@ -36,25 +38,25 @@ class InvestigatorController: UIViewController, UITableViewDelegate, UITableView
         self.tableView.dataSource = self
     }
 
+    // Delegate function for OptionTableViewCell
     func updateTable() {
         print("Reloading Data")
         sharedInfo.updateInfo()
         tableView.reloadData()
     }
     
+    // Tells the tableview how many entries it should have
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("Delegate called. Options = \(sharedInfo.options.count)")
         return self.sharedInfo.options.count
     }
     
+    // Converts an option model to a TableView Cell
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! OptionTableViewCell
         cell.delegate = self
         cell.option = sharedInfo.options[indexPath.row]
         return cell
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
     }
     
 }
