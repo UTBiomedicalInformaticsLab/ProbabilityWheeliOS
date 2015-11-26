@@ -7,6 +7,10 @@
 //
 import UIKit
 
+protocol WheelViewUpdater {
+    func updateTable()
+}
+
 class WheelView: UIView {
     let sharedInfo = SharedInfo.sharedInstance
 
@@ -14,6 +18,9 @@ class WheelView: UIView {
     
     var shapeLayers = [CAShapeLayer]()
     var knobs = [KnobView]()
+    var activeKnobs = [KnobView]()
+    
+    var delegate: WheelViewUpdater?
     
     // This variable is used to allow only one knob to be touched.
     var touchedKnob:KnobView? = nil
@@ -72,7 +79,7 @@ class WheelView: UIView {
         }
     }
     
-    
+    // little helper function for checking for conflicts
     private func getAdjustedAngle(angle: CGFloat) -> CGFloat {
         return angle % CGFloat(2 * M_PI)
     }
@@ -81,62 +88,80 @@ class WheelView: UIView {
     func anyConflicts(thisKnob : KnobView, p: CGPoint) -> Bool {
         var newAngle = getAdjustedAngle(thisKnob.getNewAngle(p))
         let allowableError = CGFloat(M_PI / 360)
-        var activeKnobs:[KnobView] = []
-        
         var thisKnobNewIndex = 0
         
-        for option in sharedInfo.getActiveOptions() {
-            let knob = knobs[option.getIndex() - 1]
-            activeKnobs.append(knob)
-            if knob == thisKnob {
-                thisKnobNewIndex = activeKnobs.count - 1
-                continue
+        if activeKnobs.count > 0 {
+            for i in 0...activeKnobs.count - 1{
+                let knob = activeKnobs[i]
+                if knob == thisKnob {
+                    thisKnobNewIndex = i
+                    continue
+                }
+                if abs(getAdjustedAngle(knob.getAngle()) - newAngle) <= allowableError  {
+                    return true
+                }
             }
-            if abs(getAdjustedAngle(knob.getAngle()) - newAngle) <= allowableError  {
-                return true
+            
+            let leftKnob:KnobView = (thisKnobNewIndex == 0) ? activeKnobs.last! : activeKnobs[thisKnobNewIndex - 1]
+            let rightKnob:KnobView = (thisKnobNewIndex == activeKnobs.count - 1) ? activeKnobs.first! : activeKnobs[thisKnobNewIndex + 1]
+        
+            if rightKnob == thisKnob || leftKnob == thisKnob || rightKnob == leftKnob {
+                return false
+            }
+        
+            let leftAngle = getAdjustedAngle(leftKnob.getAngle())
+            let rightAngle = getAdjustedAngle(rightKnob.getAngle())
+            var oldAngle = getAdjustedAngle(thisKnob.getAngle())
+        
+            /**************************************************
+            *  At this point we're trying to check if the knob is between the other two knobs
+            *  It's hard to check this because it's a circle, so using inequalities might not be that effective.
+            *  However, we do know what the inequality was before, and that it was valid.
+            *  We can just check that that inequality still holds.
+            ***************************************************/
+            
+            // There's some wonky behavior if it's around 2*PI, so to fix that we're just checking that
+            // if it's around that area, we'll add 2*PI to make the inequalities make sense
+            // This breaks if any boundary angles are around 2*PI though.
+            if !((leftAngle > CGFloat(1.9999 * M_PI) || leftAngle < 0.00001) ||
+                (rightAngle > CGFloat(1.9999 * M_PI) || rightAngle < 0.00001)) {
+                if (oldAngle > CGFloat(1.9 * M_PI) && newAngle < CGFloat(0.1 * M_PI)) {
+                    newAngle += CGFloat(2 * M_PI)
+                } else if(newAngle > CGFloat(1.9 * M_PI) && oldAngle < CGFloat(0.1 * M_PI)) {
+                    oldAngle += CGFloat(2 * M_PI)
+                }
+            }
+        
+            if leftAngle <= oldAngle && rightAngle <= oldAngle {
+                return !(leftAngle <= newAngle && rightAngle <= newAngle)
+            } else if leftAngle <= oldAngle && rightAngle >= oldAngle {
+                return !(leftAngle < newAngle && rightAngle > newAngle)
+            } else if leftAngle >= oldAngle && rightAngle <= oldAngle {
+                return !(leftAngle >= newAngle && rightAngle <= newAngle)
+            } else { // leftAngle >= oldAngle && rightAngle >= oldAngle
+                return !(leftAngle >= newAngle && rightAngle >= newAngle)
             }
         }
+        return true
+    }
+    
+    func updatePercentages() {
+        var lastKnob:KnobView = activeKnobs.last!
+        let activeOptions = sharedInfo.getActiveOptions()
         
-        let leftKnob:KnobView = (thisKnobNewIndex == 0) ? activeKnobs.last! : activeKnobs[thisKnobNewIndex - 1]
-        let rightKnob:KnobView = (thisKnobNewIndex == activeKnobs.count - 1) ? activeKnobs.first! : activeKnobs[thisKnobNewIndex + 1]
-        
-        if rightKnob == thisKnob || leftKnob == thisKnob || rightKnob == leftKnob {
-            return false
-        }
-        
-        let leftAngle = getAdjustedAngle(leftKnob.getAngle())
-        let rightAngle = getAdjustedAngle(rightKnob.getAngle())
-        var oldAngle = getAdjustedAngle(thisKnob.getAngle())
-        
-        /**************************************************
-        *  At this point we're trying to check if the knob is between the other two knobs
-        *  It's hard to check this because it's a circle, so using inequalities might not be that effective.
-        *  However, we do know what the inequality was before, and that it was valid.
-        *  We can just check that that inequality still holds.
-        ***************************************************/
-        
-        // There's some wonky behavior if it's around 2*PI, so to fix that we're just checking that
-        // if it's around that area, we'll add 2*PI to make the inequalities make sense
-        // This breaks if any boundary angles are around 2*PI though.
-        if ((leftAngle - CGFloat(2 * M_PI) < allowableError) ||
-        (rightAngle - CGFloat(2 * M_PI) < allowableError)) {
-            if (oldAngle > CGFloat(1.5 * M_PI) && newAngle < CGFloat(0.5 * M_PI)) {
-                newAngle += CGFloat(2*M_PI)
-            } else if(newAngle > CGFloat(1.5 * M_PI) && oldAngle < CGFloat(0.5 * M_PI)) {
-                oldAngle += CGFloat(2*M_PI)
+        for i in 0...activeKnobs.count - 1 {
+            let knob = activeKnobs[i]
+            var option = activeOptions.last!
+            if i > 0 {
+                option = activeOptions[i - 1]
             }
+            var percentage = ((knob.getAngle() - lastKnob.getAngle()) % CGFloat(2*M_PI)) / CGFloat(2*M_PI)
+            if percentage < 0 {
+                percentage = 1 + percentage
+            }
+            option.setPercentage(Double(percentage))
+            lastKnob = knob
         }
-        
-        if leftAngle <= oldAngle && rightAngle <= oldAngle {
-            return !(leftAngle <= newAngle && rightAngle <= newAngle)
-        } else if leftAngle <= oldAngle && rightAngle >= oldAngle {
-            return !(leftAngle < newAngle && rightAngle > newAngle)
-        } else if leftAngle >= oldAngle && rightAngle <= oldAngle {
-            return !(leftAngle >= newAngle && rightAngle <= newAngle)
-        } else { // leftAngle >= oldAngle && rightAngle >= oldAngle
-            return !(leftAngle >= newAngle && rightAngle >= newAngle)
-        }
-       
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -150,7 +175,9 @@ class WheelView: UIView {
         if let knob = touchedKnob {
             if !anyConflicts(knob, p: p1) {
                 knob.updateCoordinates(p1)
-                
+                updatePercentages()
+                drawWheel()
+                delegate?.updateTable()
             }
         }
     }
@@ -175,9 +202,11 @@ class WheelView: UIView {
     }
     
     private func initializeKnobs() {
+        activeKnobs.removeAll()
         for option in sharedInfo.getActiveOptions() {
             let thisKnob = knobs[option.getIndex() - 1]
             self.addSubview(thisKnob)
+            activeKnobs.append(thisKnob)
             thisKnob.hidden = false
         }
         for option in sharedInfo.getInactiveOptions() {
@@ -199,16 +228,19 @@ class WheelView: UIView {
             return
         }
         
-        var startAngle: CGFloat = CGFloat(M_PI)
         let radius:CGFloat = sharedInfo.getRadius()
         let center = sharedInfo.getCenter()
         
-        for option in activeOptions {
+        for i in 0...activeOptions.count - 1 {
+            let option = activeOptions[i]
             let myShapeLayer = shapeLayers[option.getIndex() - 1]
-            let thisKnob = knobs[option.getIndex() - 1]
+            let thisKnob = activeKnobs[i]
+            let nextKnob = (i == activeOptions.count - 1) ? activeKnobs[0] : activeKnobs[i + 1]
             myShapeLayer.removeAllAnimations()
             let path = UIBezierPath()
-            let endAngle:CGFloat = startAngle + CGFloat(option.getPercentage()) * CGFloat(M_PI) * 2.0
+            
+            let startAngle:CGFloat = thisKnob.getAngle()
+            let endAngle:CGFloat = nextKnob.getAngle()
             
             path.moveToPoint(center)
             
@@ -218,14 +250,7 @@ class WheelView: UIView {
                 endAngle: endAngle,
                 clockwise: true)
             path.addLineToPoint(center)
-            
             path.closePath()
-            
-            let endPoint = CGPointMake(center.x + radius * cos(startAngle) + CGFloat(sharedInfo.knob_xOffset),
-                center.y + radius * sin(startAngle) - CGFloat(sharedInfo.knob_yOffset))
-            thisKnob.setPoint(endPoint)
-            thisKnob.setAngle(startAngle)
-            startAngle = endAngle
             myShapeLayer.path = path.CGPath
         }
     }
@@ -247,8 +272,6 @@ class WheelView: UIView {
             let thisKnob = knobs[option.getIndex() - 1]
             myShapeLayer.removeAllAnimations()
             let path = UIBezierPath()
-            //let center = CGPointMake(CGRectGetMidX(myShapeLayer.bounds),
-                //CGRectGetMidY(myShapeLayer.bounds))
             let endAngle:CGFloat = startAngle + CGFloat(option.getPercentage()) * CGFloat(M_PI) * 2.0
             
             

@@ -11,8 +11,10 @@ import UIKit
 class SharedInfo {
     
     let numOptions = 6
-    let knob_xOffset = Float(-1 * 3)
-    let knob_yOffset = Float(0)
+    let knob_xOffset = Float(-2.9)
+    let knob_yOffset = Float(4)
+    //let knob_xOffset = Float(0)
+    //let knob_yOffset = Float(0)
     private var wheelRadius:CGFloat = 0.0
     private var wheelCenter:CGPoint? = nil
     var options = [Option]()

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ParticipantViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ParticipantViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, WheelViewUpdater {
 
     let sharedInfo = SharedInfo.sharedInstance
     let cellIdentifier = "participantOption"
@@ -30,8 +30,13 @@ class ParticipantViewController: UIViewController, UITableViewDelegate, UITableV
     
     @IBAction func ResetButtonPressed(sender: UIButton) {
         sharedInfo.resetActive()
+        tableView.reloadData()
+        wheelView.updateWheel()
     }
 
+    func updateTable() {
+        tableView.reloadData()
+    }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -41,6 +46,7 @@ class ParticipantViewController: UIViewController, UITableViewDelegate, UITableV
         } else {
             wheelView.drawWheel()
         }
+        wheelView.delegate = self
         tableView.reloadData()
     }
 

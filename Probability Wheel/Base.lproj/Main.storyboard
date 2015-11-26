@@ -101,7 +101,7 @@
                             <constraint firstItem="Na5-bI-IYk" firstAttribute="leading" secondItem="F0b-ND-eZb" secondAttribute="trailing" constant="-580" id="xoi-pF-aGN"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Investigator" image="first" id="acW-dT-cKf"/>
+                    <tabBarItem key="tabBarItem" title="Investigator" image="second" id="acW-dT-cKf"/>
                     <connections>
                         <outlet property="percentageButton" destination="Na5-bI-IYk" id="8Mc-CB-b0j"/>
                         <outlet property="tableView" destination="fVe-r9-B1Z" id="Itj-gq-KP2"/>
@@ -210,7 +210,7 @@
                             <constraint firstItem="Vgs-3V-HPu" firstAttribute="top" secondItem="np8-rt-bdZ" secondAttribute="bottom" constant="17" id="x75-Ie-ibp"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Participant" image="second" id="cPa-gy-q4n"/>
+                    <tabBarItem key="tabBarItem" title="Participant" image="first" id="cPa-gy-q4n"/>
                     <connections>
                         <outlet property="WheelView" destination="np8-rt-bdZ" id="c7T-Hc-fzo"/>
                         <outlet property="tableView" destination="Vgs-3V-HPu" id="8fa-hc-l89"/>

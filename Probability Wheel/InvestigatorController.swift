@@ -24,6 +24,11 @@ class InvestigatorController: UIViewController, UITableViewDelegate, UITableView
         sharedInfo.togglePercentageView()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         sharedInfo.reset()
