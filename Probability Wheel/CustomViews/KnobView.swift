@@ -11,7 +11,6 @@
 import UIKit
 
 class KnobView: UIView {
-
     private var index:Int = 0
     private var lastLocation:CGPoint = CGPointMake(0,0)
     private var angle:CGFloat = 0.0
@@ -86,32 +85,53 @@ class KnobView: UIView {
     }
     
     func closeTo(p : CGPoint) -> Bool {
+        let sensitivity = CGFloat(2.5)
         let x = frame.origin.x
         let y = frame.origin.y
-        let w = frame.width
-        let h = frame.height
+        let w = sensitivity*frame.width
+        let h = sensitivity*frame.height
         
         return p.x >= x - w && p.x <= x + w && p.y >= y - h && p.y <= y + h
     }
     
-    func updateAngle(point: CGPoint) {
+    func distance(p : CGPoint) -> CGFloat {
+        return sqrt(pow(p.x - frame.origin.x, 2) + pow(p.y - frame.origin.y, 2))
+    }
+    
+    
+    func getNewAngle(point: CGPoint) -> CGFloat {
         let center = sharedInfo.getCenter()
+        
+        /*
         if point.x >= center.x && point.y >= center.y {         // Quadrant I
-            angle =  -abs(atan2(center.y - (point.y + 10), (point.x + 10) - center.x) * CGFloat(180.0 / M_PI))
+            return -abs(atan2(center.y - (point.y), (point.x) - center.x) * CGFloat(180.0 / M_PI))
         } else if point.x < center.x && point.y > center.y {    // Quadrant II
-            angle = abs(360 + (atan2(-((point.y + 10) - center.y), ((point.x + 10) - center.x)) * CGFloat(180 / M_PI)))
+            return abs(360 + (atan2(-((point.y) - center.y), ((point.x) - center.x)) * CGFloat(180 / M_PI)))
         } else if point.x < center.x && point.y < center.y {    // Quadrant III
-            angle = abs(360 + (atan2(-((point.y + 10) - center.y), -(center.x - (point.x + 10))) * CGFloat(180 / M_PI)))
+            return abs(360 + (atan2(-((point.y) - center.y), -(center.x - (point.x))) * CGFloat(180 / M_PI)))
         } else {                                                // Quadrant IV
-            angle = abs(atan2(center.y - (point.y + 10), -(center.x - (point.x + 10))) * (CGFloat(180 / M_PI)))
+            return abs(atan2(center.y - (point.y + 10), -(center.x - (point.x))) * (CGFloat(180 / M_PI)))
+        } */
+        
+        if point.x >= center.x && point.y >= center.y {         // Quadrant I
+            return abs(CGFloat(2 * M_PI) - atan2(center.y - point.y, point.x - center.x))
+        } else if point.x < center.x && point.y > center.y {    // Quadrant II
+            return abs(CGFloat(2 * M_PI) - (atan2(center.y - point.y, point.x - center.x)))
+        } else if point.x < center.x && point.y < center.y {    // Quadrant III
+            return abs(CGFloat(2 * M_PI) - (atan2(center.y - point.y, point.x - center.x)))
+        } else {                                                // Quadrant IV
+            return abs(CGFloat(2 * M_PI) - atan2(center.y - point.y, point.x - center.x))
         }
     }
     
     func updateCoordinates(p: CGPoint) {
-        updateAngle(p)
+        //let newAngle = getNewAngle(p)
+        angle = getNewAngle(p)
         let radius = Float(sharedInfo.getRadius())
         let center = sharedInfo.getCenter()
-        self.frame.origin.x = center.x + CGFloat(radius * cos(Float(angle) / 360 * Float(2*M_PI)))
-        self.frame.origin.y = center.y - CGFloat(radius * sin(Float(angle) / 360 * Float(2*M_PI)))
+        //self.frame.origin.x = center.x + CGFloat(radius * cos(Float(newAngle) / 360 * Float(2*M_PI)) + sharedInfo.knob_xOffset)
+        //self.frame.origin.y = center.y - CGFloat(radius * sin(Float(newAngle) / 360 * Float(2*M_PI)) + sharedInfo.knob_yOffset)
+        self.frame.origin.x = center.x + CGFloat(radius * cos(Float(angle)) + sharedInfo.knob_xOffset)
+        self.frame.origin.y = center.y + CGFloat(radius * sin(Float(angle)) + sharedInfo.knob_yOffset)
     }
 }

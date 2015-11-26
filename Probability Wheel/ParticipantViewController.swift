@@ -35,7 +35,12 @@ class ParticipantViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        wheelView.updateWheel()
+        if sharedInfo.resetWheel {
+            wheelView.updateWheel()
+            sharedInfo.resetWheel = false
+        } else {
+            wheelView.drawWheel()
+        }
         tableView.reloadData()
     }
 
