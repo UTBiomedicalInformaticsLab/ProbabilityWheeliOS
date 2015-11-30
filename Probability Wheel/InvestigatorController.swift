@@ -15,13 +15,15 @@ class InvestigatorController: UIViewController, UITableViewDelegate, UITableView
     
     @IBOutlet weak var percentageButton: UIButton!
     
-    @IBAction func percentageButtonPressed(sender: UIButton) {
-        if sender.titleLabel!.text == "Show %" {
-            sender.setTitle("Hide %", forState: .Normal)
-        } else {
-            sender.setTitle("Show %", forState: .Normal)
-        }
-        sharedInfo.togglePercentageView()
+    //-------------- Initializations/System functions -------------------
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        sharedInfo.reset()
+        //percentageButton.titleLabel?.numberOfLines = 1
+        percentageButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        //percentageButton.titleLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
     }
     
     // Handles when switching between Investigator/Participant
@@ -30,24 +32,40 @@ class InvestigatorController: UIViewController, UITableViewDelegate, UITableView
         tableView.reloadData()
     }
     
-    // Initializations
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        sharedInfo.reset()
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
+    // The following two functions prevent landscape mode
+    override func shouldAutorotate() -> Bool {
+        if (UIDevice.currentDevice().orientation == UIDeviceOrientation.LandscapeLeft ||
+            UIDevice.currentDevice().orientation == UIDeviceOrientation.LandscapeRight ||
+            UIDevice.currentDevice().orientation == UIDeviceOrientation.Unknown) {
+                return false;
+        }
+        else {
+            return true;
+        }
+    }
+    
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.Portrait
+    }
+    
+    @IBAction func percentageButtonPressed(sender: UIButton) {
+        if sender.titleLabel!.text == "Show %" {
+            sender.setTitle("Hide %", forState: .Normal)
+        } else {
+            sender.setTitle("Show %", forState: .Normal)
+        }
+        sharedInfo.togglePercentageView()
     }
 
+    //-------------- Table related functions -------------------
     // Delegate function for OptionTableViewCell
     func updateTable() {
-        print("Reloading Data")
         sharedInfo.updateInfo()
         tableView.reloadData()
     }
     
     // Tells the tableview how many entries it should have
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("Delegate called. Options = \(sharedInfo.options.count)")
         return self.sharedInfo.options.count
     }
     

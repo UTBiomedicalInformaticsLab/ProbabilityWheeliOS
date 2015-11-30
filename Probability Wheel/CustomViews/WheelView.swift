@@ -171,8 +171,8 @@ class WheelView: UIView {
             // There's some wonky behavior if it's around 2*PI, so to fix that we're just checking that
             // if it's around that area, we'll add 2*PI to make the inequalities make sense
             // This breaks if any boundary angles are around 2*PI though.
-            if !((leftAngle > CGFloat(1.9999 * M_PI) || leftAngle < 0.00001) ||
-                (rightAngle > CGFloat(1.9999 * M_PI) || rightAngle < 0.00001)) {
+            if !((leftAngle > CGFloat(1.9 * M_PI) || leftAngle < 0.1) ||
+                (rightAngle > CGFloat(1.9 * M_PI) || rightAngle < 0.1)) {
                 if (oldAngle > CGFloat(1.9 * M_PI) && newAngle < CGFloat(0.1 * M_PI)) {
                     newAngle += CGFloat(2 * M_PI)
                 } else if(newAngle > CGFloat(1.9 * M_PI) && oldAngle < CGFloat(0.1 * M_PI)) {
@@ -183,7 +183,7 @@ class WheelView: UIView {
             if leftAngle <= oldAngle && rightAngle <= oldAngle {
                 return !(leftAngle <= newAngle && rightAngle <= newAngle)
             } else if leftAngle <= oldAngle && rightAngle >= oldAngle {
-                return !(leftAngle < newAngle && rightAngle > newAngle)
+                return !(leftAngle <= newAngle && rightAngle >= newAngle)
             } else if leftAngle >= oldAngle && rightAngle <= oldAngle {
                 return !(leftAngle >= newAngle && rightAngle <= newAngle)
             } else { // leftAngle >= oldAngle && rightAngle >= oldAngle

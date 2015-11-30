@@ -60,7 +60,7 @@ class KnobView: UIView {
     }
     
     func closeTo(p : CGPoint) -> Bool {
-        let sensitivity = CGFloat(2.5)
+        let sensitivity = CGFloat(5)
         let x = frame.origin.x
         let y = frame.origin.y
         let w = sensitivity*frame.width
