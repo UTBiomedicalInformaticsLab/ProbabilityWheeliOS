@@ -19,14 +19,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="46" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="fVe-r9-B1Z">
-                                <rect key="frame" x="20" y="102" width="560" height="396"/>
+                                <rect key="frame" x="20" y="118" width="560" height="380"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="optionCell" rowHeight="46" id="Fdh-Um-2K3" customClass="OptionTableViewCell" customModule="Probability_Wheel" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="560" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Fdh-Um-2K3" id="0YA-Cw-ikl" userLabel="ContentView">
-                                            <rect key="frame" x="0.0" y="0.0" width="560" height="45"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="560" height="45.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0aP-B0-us7">
@@ -72,13 +72,16 @@
                                 </prototypes>
                             </tableView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F0b-ND-eZb">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="N4R-OP-NsQ"/>
+                                </constraints>
                                 <items>
                                     <navigationItem title="Investigator View" id="Nsg-Vu-VQQ"/>
                                 </items>
                             </navigationBar>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Na5-bI-IYk" userLabel="percentageButton">
-                                <rect key="frame" x="20" y="64" width="560" height="30"/>
+                                <rect key="frame" x="20" y="80" width="560" height="30"/>
                                 <state key="normal" title="Hide %"/>
                                 <connections>
                                     <action selector="percentageButtonPressed:" destination="9pv-A4-QxB" eventType="touchUpInside" id="LjP-pM-Loe"/>
@@ -97,8 +100,8 @@
                             <constraint firstItem="Na5-bI-IYk" firstAttribute="top" secondItem="F0b-ND-eZb" secondAttribute="bottom" constant="20" id="LZd-2t-3EB"/>
                             <constraint firstItem="F0b-ND-eZb" firstAttribute="top" secondItem="Ia1-K6-d13" secondAttribute="bottom" constant="-20" id="eah-Lv-nWZ"/>
                             <constraint firstItem="fVe-r9-B1Z" firstAttribute="centerX" secondItem="tsR-hK-woN" secondAttribute="centerX" id="eor-ov-N9S"/>
-                            <constraint firstItem="fVe-r9-B1Z" firstAttribute="top" secondItem="Ia1-K6-d13" secondAttribute="bottom" constant="82" id="hab-hB-1vP"/>
-                            <constraint firstItem="fVe-r9-B1Z" firstAttribute="centerY" secondItem="tsR-hK-woN" secondAttribute="centerY" id="lAB-dm-fAP"/>
+                            <constraint firstItem="fVe-r9-B1Z" firstAttribute="top" secondItem="Ia1-K6-d13" secondAttribute="bottom" constant="98" id="hab-hB-1vP"/>
+                            <constraint firstItem="fVe-r9-B1Z" firstAttribute="centerY" secondItem="tsR-hK-woN" secondAttribute="centerY" constant="8" id="lAB-dm-fAP"/>
                             <constraint firstItem="fVe-r9-B1Z" firstAttribute="leading" secondItem="tsR-hK-woN" secondAttribute="leadingMargin" id="pT3-9S-tPa"/>
                             <constraint firstItem="Na5-bI-IYk" firstAttribute="leading" secondItem="F0b-ND-eZb" secondAttribute="trailing" constant="-580" id="xoi-pF-aGN"/>
                         </constraints>
@@ -127,12 +130,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <navigationBar contentMode="scaleToFill" placeholderIntrinsicWidth="600" placeholderIntrinsicHeight="44" translatesAutoresizingMaskIntoConstraints="NO" id="fzU-HH-ZPz">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="iOk-pv-BNz"/>
+                                </constraints>
                                 <items>
                                     <navigationItem title="Participant View" id="Ncb-BP-FW7">
                                         <barButtonItem key="leftBarButtonItem" style="plain" id="vKd-uC-QSC">
                                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="45v-Q8-dWj">
-                                                <rect key="frame" x="20" y="7" width="39" height="30"/>
+                                                <rect key="frame" x="20" y="23" width="39" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <state key="normal" title="Reset"/>
                                                 <connections>
@@ -151,7 +157,7 @@
                                         <rect key="frame" x="0.0" y="28" width="560" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="EtC-Sw-5Lg" id="2ik-4I-dom">
-                                            <rect key="frame" x="0.0" y="0.0" width="560" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="560" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="72o-2W-2tH">
@@ -185,7 +191,7 @@
                                 </prototypes>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="np8-rt-bdZ" customClass="WheelView" customModule="Probability_Wheel" customModuleProvider="target">
-                                <rect key="frame" x="20" y="44" width="560" height="277"/>
+                                <rect key="frame" x="20" y="60" width="560" height="261"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HKO-mM-Wm4" customClass="WheelView" customModule="Probability_Wheel" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="560" height="277"/>

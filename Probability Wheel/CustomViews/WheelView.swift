@@ -14,7 +14,7 @@ protocol WheelViewUpdater {
 class WheelView: UIView {
     //------------ Variables and Constants -------------------
     let sharedInfo = SharedInfo.sharedInstance
-    let knobLength = 20.0
+    let knobLength = 23.0
     
     var shapeLayers = [CAShapeLayer]()
     var knobs = [KnobView]()
@@ -272,7 +272,7 @@ class WheelView: UIView {
         
         var startAngle: CGFloat = CGFloat(M_PI)
         let radius:CGFloat = min(self.bounds.size.width,
-            self.bounds.size.height) / 2.0 - 5
+            self.bounds.size.height) / 2.0 - 20
         sharedInfo.setRadius(radius)
         let center = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))
         sharedInfo.setCenter(center)
