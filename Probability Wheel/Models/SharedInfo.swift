@@ -79,7 +79,7 @@ class SharedInfo {
         var count = 0
         for option in options {
             if option.isActive() {
-                ++count
+                count += 1
             }
         }
         return count
