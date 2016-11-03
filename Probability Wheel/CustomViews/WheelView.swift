@@ -7,25 +7,46 @@
 //
 import UIKit
 
-protocol WheelViewUpdater {
-    func updateTable()
-}
-
 class WheelView: UIView {
-    //------------ Variables and Constants -------------------
     let sharedInfo = SharedInfo.sharedInstance
-    let knobLength = 23.0
+
+    let knobLength = 20.0
     
     var shapeLayers = [CAShapeLayer]()
     var knobs = [KnobView]()
-    var activeKnobs = [KnobView]()
-    
-    var delegate: WheelViewUpdater?
     
     // This variable is used to allow only one knob to be touched.
     var touchedKnob:KnobView? = nil
     
-    //------------ Initializations ---------------------------
+    func initializeElements() {
+        for i in 1...sharedInfo.numOptions {
+            shapeLayers.append(CAShapeLayer())
+            knobs.append(KnobView(frame: CGRect(x: 0.0, y: 0.0, width: knobLength, height: knobLength)))
+            knobs[i - 1].setIdx(i)
+        }
+        updateWheel()
+    }
+    
+    override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
+        let hitView = super.hitTest(point, withEvent: event)
+        if hitView == self {
+            return nil
+        }
+        return hitView
+    }
+    
+    
+    func modifiedHitTest(points: [CGPoint], withEvent event: UIEvent?) -> UIView?  {
+        var hitView:UIView?
+        for point in points {
+            hitView = hitTest(point, withEvent: event)
+            if hitView != nil {
+                return hitView
+            }
+        }
+        return nil
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         initializeElements()
@@ -36,53 +57,39 @@ class WheelView: UIView {
         initializeElements()
     }
 
-    private func initializeElements() {
-        for i in 1...sharedInfo.numOptions {
-            shapeLayers.append(CAShapeLayer())
-            knobs.append(KnobView(frame: CGRect(x: 0.0, y: 0.0, width: knobLength, height: knobLength)))
-            knobs[i - 1].setIdx(i)
+    func getTouchedView(p1: CGPoint) -> UIView? {
+        /*
+        let dist:CGFloat = CGFloat(2*knobLength)
+        let p2 = CGPointMake(p1.x + dist, p1.y)
+        let p3 = CGPointMake(p1.x - dist, p1.y)
+        let p4 = CGPointMake(p1.x, p1.y + dist)
+        let p5 = CGPointMake(p1.x, p1.y - dist)
+        let p6 = CGPointMake(p1.x + dist, p1.y + dist)
+        let p7 = CGPointMake(p1.x - dist, p1.y - dist)
+        let points = [p1, p2, p3, p4, p5, p6, p7]
+        //return modifiedHitTest(points, withEvent: nil)
+        return hitTest(p1, withEvent: nil)
+        */
+        for knob in knobs {
+            if knob.closeTo(p1) {
+                return knob
+            }
         }
+        return nil
     }
     
-    private func initializeShapeLayers() {
-        for option in sharedInfo.getActiveOptions() {
-            let requiredShapeLayer = shapeLayers[option.getIndex() - 1]
-            requiredShapeLayer.frame = frame
-            requiredShapeLayer.fillColor = option.getColor().CGColor
-            self.layer.addSublayer(requiredShapeLayer)
-            requiredShapeLayer.hidden = false
-        }
-        for option in sharedInfo.getInactiveOptions() {
-            let requiredShapeLayer = shapeLayers[option.getIndex() - 1]
-            requiredShapeLayer.hidden = true
-        }
-    }
-    
-    private func initializeKnobs() {
-        activeKnobs.removeAll()
-        for option in sharedInfo.getActiveOptions() {
-            let thisKnob = knobs[option.getIndex() - 1]
-            self.addSubview(thisKnob)
-            activeKnobs.append(thisKnob)
-            thisKnob.hidden = false
-        }
-        for option in sharedInfo.getInactiveOptions() {
-            let thisKnob = knobs[option.getIndex() - 1]
-            thisKnob.hidden = true
-        }
-    }
-
-    
-    //------------ Touch functions -------------------
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if touchedKnob != nil || touches.first == nil {
             return
         }
+        
         let touch:UITouch = touches.first!
         let p1 = touch.locationInView(self)
         let selectedView:UIView? = getTouchedView(p1)
+        
         if let knob = selectedView as? KnobView {
             touchedKnob = knob
+            print("Knob \(knob.getIdx()) has been touched")
         }
     }
     
@@ -95,192 +102,65 @@ class WheelView: UIView {
         let touch:UITouch = touches.first!
         let p1 = touch.locationInView(self)
         if let knob = touchedKnob {
-            if !anyConflicts(knob, p: p1) {
-                knob.updateCoordinates(p1)
-                updatePercentages()
-                drawWheel()
-                delegate?.updateTable()
-            }
+            print("Knob \(knob.getIdx()) moved")
+            //let knob2 = (knob.getIdx() == 6) ? knobs[0] : knobs[knob.getIdx() + 1]
+            knob.updateCoordinates(p1)
+            //knob.setPoint(p1)
         }
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesEnded(touches, withEvent: event)
-        touchedKnob = nil
-    }
-    
-    private func getTouchedView(p1: CGPoint) -> UIView? {
-        var knobsInRange:[KnobView] = []
-        var closestKnob:KnobView? = nil
-        var minDistance:CGFloat = CGFloat(INT_MAX)
-        for knob in knobs {
-            if knob.closeTo(p1) {
-                knobsInRange.append(knob)
-            }
+        if let knob = touchedKnob {
+            print("Knob \(knob.getIdx()) ended")
+            touchedKnob = nil
         }
-        for knob in knobsInRange {
-            let thisDistance = knob.distance(p1)
-            if thisDistance < minDistance {
-                closestKnob = knob
-                minDistance = thisDistance
-            }
-        }
-        return closestKnob
     }
     
-    // little helper function for checking for conflicts
-    private func getAdjustedAngle(angle: CGFloat) -> CGFloat {
-        return angle % CGFloat(2 * M_PI)
-    }
     
-    private func anyConflicts(thisKnob : KnobView, p: CGPoint) -> Bool {
-        var newAngle = getAdjustedAngle(thisKnob.getNewAngle(p))
-        let allowableError = CGFloat(M_PI / 360)
-        var thisKnobNewIndex = 0
-        
-        if activeKnobs.count > 0 {
-            for i in 0...activeKnobs.count - 1{
-                let knob = activeKnobs[i]
-                if knob == thisKnob {
-                    thisKnobNewIndex = i
-                    continue
-                }
-                if abs(getAdjustedAngle(knob.getAngle()) - newAngle) <= allowableError  {
-                    return true
-                }
-            }
-            
-            let leftKnob:KnobView = (thisKnobNewIndex == 0) ? activeKnobs.last! : activeKnobs[thisKnobNewIndex - 1]
-            let rightKnob:KnobView = (thisKnobNewIndex == activeKnobs.count - 1) ? activeKnobs.first! : activeKnobs[thisKnobNewIndex + 1]
-        
-            if rightKnob == thisKnob || leftKnob == thisKnob || rightKnob == leftKnob {
-                return false
-            }
-        
-            let leftAngle = getAdjustedAngle(leftKnob.getAngle())
-            let rightAngle = getAdjustedAngle(rightKnob.getAngle())
-            var oldAngle = getAdjustedAngle(thisKnob.getAngle())
-        
-            /**************************************************
-            *  At this point we're trying to check if the knob is between the other two knobs
-            *  It's hard to check this because it's a circle, so using inequalities might not be that effective.
-            *  However, we do know what the inequality was before, and that it was valid.
-            *  We can just check that that inequality still holds.
-            ***************************************************/
-            
-            // There's some wonky behavior if it's around 2*PI, so to fix that we're just checking that
-            // if it's around that area, we'll add 2*PI to make the inequalities make sense
-            // This breaks if any boundary angles are around 2*PI though.
-            if !((leftAngle > CGFloat(1.9 * M_PI) || leftAngle < 0.1) ||
-                (rightAngle > CGFloat(1.9 * M_PI) || rightAngle < 0.1)) {
-                if (oldAngle > CGFloat(1.9 * M_PI) && newAngle < CGFloat(0.1 * M_PI)) {
-                    newAngle += CGFloat(2 * M_PI)
-                } else if(newAngle > CGFloat(1.9 * M_PI) && oldAngle < CGFloat(0.1 * M_PI)) {
-                    oldAngle += CGFloat(2 * M_PI)
-                }
-            }
-        
-            if leftAngle <= oldAngle && rightAngle <= oldAngle {
-                return !(leftAngle <= newAngle && rightAngle <= newAngle)
-            } else if leftAngle <= oldAngle && rightAngle >= oldAngle {
-                return !(leftAngle <= newAngle && rightAngle >= newAngle)
-            } else if leftAngle >= oldAngle && rightAngle <= oldAngle {
-                return !(leftAngle >= newAngle && rightAngle <= newAngle)
-            } else { // leftAngle >= oldAngle && rightAngle >= oldAngle
-                return !(leftAngle >= newAngle && rightAngle >= newAngle)
-            }
-        }
-        return true
-    }
     
-    //---------------- Updaters ----------------
     func updateWheel() {
-        // Initialize knobs last. Doing this puts it "on top" of the shapes.
-        initializeShapeLayers()
-        initializeKnobs()
-        drawResetWheel()
-    }
-    
-    private func updatePercentages() {
-        var lastKnob:KnobView = activeKnobs.last!
+        let totalOptions = sharedInfo.activeOptionsCount() - 1
+        print ("Wheel updating. TotalOptions = \(totalOptions)")
         let activeOptions = sharedInfo.getActiveOptions()
+        let inactiveOptions = sharedInfo.getInactiveOptions()
+        for option in activeOptions {
+            let requiredShapeLayer = shapeLayers[option.getIndex() - 1]
+            let thisKnob = knobs[option.getIndex() - 1]
+            
+            requiredShapeLayer.frame = frame
+            requiredShapeLayer.fillColor = option.getColor().CGColor
+            self.layer.addSublayer(requiredShapeLayer)
+            self.addSubview(thisKnob)
+            thisKnob.hidden = false
+        }
+        for option in inactiveOptions {
+            let thisKnob = knobs[option.getIndex() - 1]
+            thisKnob.hidden = true
+        }
         
-        for i in 0...activeKnobs.count - 1 {
-            let knob = activeKnobs[i]
-            var option = activeOptions.last!
-            if i > 0 {
-                option = activeOptions[i - 1]
-            }
-            var percentage = ((knob.getAngle() - lastKnob.getAngle()) % CGFloat(2*M_PI)) / CGFloat(2*M_PI)
-            if percentage < 0 {
-                percentage = 1 + percentage
-            }
-            option.setPercentage(Double(percentage))
-            lastKnob = knob
-        }
-    }
-    
-    //--------------- Drawing -----------------
-    override func layoutSubviews()
-    {
-        super.layoutSubviews()
-        for requiredShapeLayer in shapeLayers {
-            requiredShapeLayer.frame = self.layer.bounds
-            requiredShapeLayer.removeAllAnimations()
-        }
-        drawResetWheel()
+        drawWheel()
     }
     
     func drawWheel() {
         let activeOptions = sharedInfo.getActiveOptions()
-        if sharedInfo.activeOptionsCount() == 0 {
-            return
-        }
-        
-        let radius:CGFloat = sharedInfo.getRadius()
-        let center = sharedInfo.getCenter()
-        
-        for i in 0...activeOptions.count - 1 {
-            let option = activeOptions[i]
-            let myShapeLayer = shapeLayers[option.getIndex() - 1]
-            let thisKnob = activeKnobs[i]
-            let nextKnob = (i == activeOptions.count - 1) ? activeKnobs[0] : activeKnobs[i + 1]
-            myShapeLayer.removeAllAnimations()
-            let path = UIBezierPath()
-            
-            let startAngle:CGFloat = thisKnob.getAngle()
-            let endAngle:CGFloat = nextKnob.getAngle()
-            
-            path.moveToPoint(center)
-            
-            path.addArcWithCenter(center,
-                radius: radius,
-                startAngle: startAngle,
-                endAngle: endAngle,
-                clockwise: true)
-            path.addLineToPoint(center)
-            path.closePath()
-            myShapeLayer.path = path.CGPath
-        }
-    }
-    
-    private func drawResetWheel() {
-        let activeOptions = sharedInfo.getActiveOptions()
+        //print("Drawing Wheel")
         if sharedInfo.activeOptionsCount() == 0 {
             return
         }
         
         var startAngle: CGFloat = CGFloat(M_PI)
         let radius:CGFloat = min(self.bounds.size.width,
-            self.bounds.size.height) / 2.0 - 20
+            self.bounds.size.height) / 2.0 - 5
         sharedInfo.setRadius(radius)
-        let center = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))
-        sharedInfo.setCenter(center)
         for option in activeOptions {
             let myShapeLayer = shapeLayers[option.getIndex() - 1]
             let thisKnob = knobs[option.getIndex() - 1]
             myShapeLayer.removeAllAnimations()
             let path = UIBezierPath()
+            let center = CGPointMake(CGRectGetMidX(myShapeLayer.bounds),
+                CGRectGetMidY(myShapeLayer.bounds))
+            sharedInfo.setCenter(center)
             let endAngle:CGFloat = startAngle + CGFloat(option.getPercentage()) * CGFloat(M_PI) * 2.0
             
             
@@ -294,13 +174,22 @@ class WheelView: UIView {
             path.addLineToPoint(center)
             
             path.closePath()
-           
-            let endPoint = CGPointMake(center.x + radius * cos(startAngle) + CGFloat(sharedInfo.knob_xOffset),
-                center.y + radius * sin(startAngle) + CGFloat(sharedInfo.knob_yOffset))
+            let endPoint = CGPointMake(center.x + radius * cos(startAngle), center.y + radius * sin(startAngle))
+            //print("Calculated endPoint for option \(option.getIndex()) is (\(endPoint.x),\(endPoint.y))")
             thisKnob.setPoint(endPoint)
             thisKnob.setAngle(startAngle)
             startAngle = endAngle
             myShapeLayer.path = path.CGPath
         }
+    }
+    
+    override func layoutSubviews()
+    {
+        super.layoutSubviews()
+        for requiredShapeLayer in shapeLayers {
+            requiredShapeLayer.frame = self.layer.bounds
+            requiredShapeLayer.removeAllAnimations()
+        }
+        self.drawWheel()
     }
 }

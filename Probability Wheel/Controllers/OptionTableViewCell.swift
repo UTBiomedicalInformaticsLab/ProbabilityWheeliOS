@@ -35,12 +35,16 @@ class OptionTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBAction func ActivationToggled(sender: UIButton) {
         if self.option != nil {
             if self.option!.isActive() {
-                if sharedInfo.activeOptionsCount() <= 2 {       // There must be at least 2 active options available
+                if sharedInfo.activeOptionsCount() <= 2 {
                     return
                 }
                 self.option!.setInactive()
+                sender.setTitleColor(inactiveColor, forState: UIControlState.Normal)
+                print("Option \(option!.getIndex()) set inactive")
             } else {
                 self.option!.setActive()
+                sender.setTitleColor(activeColor, forState: UIControlState.Normal)
+                print("Option \(option!.getIndex()) set active")
             }
             delegate?.updateTable()
         }
@@ -48,7 +52,9 @@ class OptionTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     @IBAction func UserTextChanged(sender: UITextField) {
         if self.option != nil {
+            let oldText = option!.getText()
             option!.setText(sender.text!)
+            print("Text in Option \(option!.getIndex()) changed from \(oldText) to \(sender.text!)")
             delegate?.updateTable()
         }
     }

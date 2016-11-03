@@ -19,6 +19,7 @@
 		DD8BB4741BE1A27B0058E2CD /* Probability_WheelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8BB4731BE1A27B0058E2CD /* Probability_WheelTests.swift */; };
 		DD8BB47F1BE1A27B0058E2CD /* Probability_WheelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8BB47E1BE1A27B0058E2CD /* Probability_WheelUITests.swift */; };
 		DD9B7FA61BF9609500EB0E71 /* KnobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD9B7FA51BF9609500EB0E71 /* KnobView.swift */; };
+		DDB0CC2F1BEC02AA001E2AB5 /* CustomTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB0CC2E1BEC02AA001E2AB5 /* CustomTabViewController.swift */; };
 		DDB8589A1BF9226100F31EEF /* ParticipantOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB858991BF9226100F31EEF /* ParticipantOptionCell.swift */; };
 		DDC9512B1BE6A4D400E017CB /* OptionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC9512A1BE6A4D400E017CB /* OptionTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -59,6 +60,7 @@
 		DD8BB47E1BE1A27B0058E2CD /* Probability_WheelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Probability_WheelUITests.swift; sourceTree = "<group>"; };
 		DD8BB4801BE1A27B0058E2CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DD9B7FA51BF9609500EB0E71 /* KnobView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KnobView.swift; path = CustomViews/KnobView.swift; sourceTree = "<group>"; };
+		DDB0CC2E1BEC02AA001E2AB5 /* CustomTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomTabViewController.swift; path = Controllers/CustomTabViewController.swift; sourceTree = "<group>"; };
 		DDB858991BF9226100F31EEF /* ParticipantOptionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParticipantOptionCell.swift; path = Controllers/ParticipantOptionCell.swift; sourceTree = "<group>"; };
 		DDC9512A1BE6A4D400E017CB /* OptionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptionTableViewCell.swift; path = Controllers/OptionTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -119,6 +121,7 @@
 				DD8BB4621BE1A27B0058E2CD /* Main.storyboard */,
 				DD9B7FA51BF9609500EB0E71 /* KnobView.swift */,
 				DD8BB4601BE1A27B0058E2CD /* ParticipantViewController.swift */,
+				DDB0CC2E1BEC02AA001E2AB5 /* CustomTabViewController.swift */,
 				DD1C73741BE3B910002A6EED /* Option.swift */,
 				DD7535DC1BF06962000B700B /* WheelView.swift */,
 				DD8BB4651BE1A27B0058E2CD /* Assets.xcassets */,
@@ -281,6 +284,7 @@
 				DD7535DD1BF06962000B700B /* WheelView.swift in Sources */,
 				DD3F73E61BEDB39200EE151B /* SharedInfo.swift in Sources */,
 				DD8BB4611BE1A27B0058E2CD /* ParticipantViewController.swift in Sources */,
+				DDB0CC2F1BEC02AA001E2AB5 /* CustomTabViewController.swift in Sources */,
 				DD8BB45D1BE1A27B0058E2CD /* AppDelegate.swift in Sources */,
 				DD9B7FA61BF9609500EB0E71 /* KnobView.swift in Sources */,
 				DD8BB45F1BE1A27B0058E2CD /* InvestigatorController.swift in Sources */,
@@ -430,7 +434,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Probability Wheel/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.utexas.bme.bmil.Probability-Wheel";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -446,7 +450,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Probability Wheel/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.utexas.bme.bmil.Probability-Wheel";
 				PRODUCT_NAME = "$(TARGET_NAME)";

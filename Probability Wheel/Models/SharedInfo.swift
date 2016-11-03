@@ -5,25 +5,14 @@
 //  Created by Allen Wang on 11/6/15.
 //  Copyright © 2015 UT Biomedical Informatics Lab. All rights reserved.
 //
-//  This class essentially acts as a model for all other views/controllers.
-//  Traditionally, we would want each MVC module to have their own distinct
-//  model, view, controller, but each MVC requires access to all of these options.
-//
-//  In a sense, these are accessible to anything that can access the sharedInstance.
-//  By using a singleton class, it can be accessed pretty much globally.
 
 import Foundation
 import UIKit
 class SharedInfo {
     
     let numOptions = 6
-    let knob_xOffset = Float(-7.0)
-    let knob_yOffset = Float(-5.0)
     private var wheelRadius:CGFloat = 0.0
     private var wheelCenter:CGPoint? = nil
-    var options = [Option]()
-    var showPercentage : Bool = true
-    var resetWheel : Bool = true
     
     // We want this info to be shared across different views
     // Therefore we will use a singleton class
@@ -40,7 +29,9 @@ class SharedInfo {
         return Static.instance!
     }
     
-
+    var options = [Option]()
+    var showPercentage : Bool = true
+    
     func reset() {
         var newOptions = [Option]()
         for i in 1...numOptions {
@@ -52,7 +43,6 @@ class SharedInfo {
         }
         options = newOptions
         showPercentage = true
-        resetWheel = true
     }
     
     func setRadius(radius: CGFloat) {
@@ -79,7 +69,7 @@ class SharedInfo {
         var count = 0
         for option in options {
             if option.isActive() {
-                count += 1
+                ++count
             }
         }
         return count
@@ -119,7 +109,6 @@ class SharedInfo {
                 option.setPercentage(0.0)
             }
         }
-        resetWheel = true
     }
 
     func togglePercentageView() {
